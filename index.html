@@ -31,7 +31,7 @@ body{background:var(--bg);font-family:var(--font);color:#1a1a2e;margin:0}
 .tb-btn.tb-warn:hover{background:var(--c4);border-color:var(--c4);color:#000}
 .tb-btn.tb-green:hover{background:var(--c5);border-color:var(--c5)}
 /* SEARCH */
-.search-area{max-width:650px;margin:-24px auto 0;position:relative;z-index:50;padding:0 16px}
+.search-area{max-width:650px;margin: 30px auto 0;position:relative;z-index:50;padding:0 16px}
 .search-box{background:#fff;padding:6px;border-radius:50px;box-shadow:0 8px 24px rgba(0,0,0,.15);display:flex;align-items:center;border:2px solid transparent;transition:border-color .2s}
 .search-box:focus-within{border-color:var(--c2)}
 .search-input{border:none;flex-grow:1;padding:10px 18px;font-size:.95rem;outline:none;border-radius:50px;font-family:var(--font)}
@@ -145,9 +145,58 @@ body{background:var(--bg);font-family:var(--font);color:#1a1a2e;margin:0}
 .game-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:10px}
 .game-cell{width:100%;aspect-ratio:1;background:#333;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:2rem;cursor:pointer;transition:all .2s}
 .game-cell:hover{background:#444;transform:scale(1.05)}
+/* --- OVERLAY LOGIN --- */
+#login-overlay {
+    position: fixed; inset: 0; background: linear-gradient(160deg, #0a1628 0%, #102a50 40%, #1a3a6a 100%);
+    z-index: 99999; display: flex; align-items: center; justify-content: center; flex-direction: column;
+    transition: opacity 0.4s ease; padding: 20px;
+}
+.login-box {
+    background: #fff; padding: 30px 24px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    width: 100%; max-width: 340px; text-align: center; border-bottom: 4px solid var(--c3);
+}
+.login-icon {
+    background: #eef1f5; width: 64px; height: 64px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;
+    color: var(--c2); font-size: 30px;
+}
+.login-title { font-size: 1.4rem; font-weight: 800; color: #1a1a2e; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+.login-sub { font-size: 0.85rem; color: #666; margin-bottom: 24px; font-weight: 500; }
+.input-group-login { position: relative; margin-bottom: 20px; }
+.input-group-login input {
+    width: 100%; padding: 14px 14px 14px 44px; border-radius: 12px;
+    border: 2px solid #ddd; font-size: 1rem; font-weight: 600; outline: none; transition: border-color 0.2s;
+    font-family: var(--font);
+}
+.input-group-login input:focus { border-color: var(--c2); }
+.input-group-login i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #888; }
+.btn-login {
+    width: 100%; padding: 14px; border-radius: 12px; border: none;
+    background: var(--c2); color: white; font-weight: 800; font-size: 1rem;
+    cursor: pointer; transition: background 0.2s; font-family: var(--font);
+}
+.btn-login:hover { background: #003366; }
+.btn-login:active { transform: scale(0.97); }
+.error-msg-login { color: var(--c3); font-size: 0.85rem; font-weight: 700; margin-top: 12px; display: none; }
 </style>
 </head>
 <body>
+    <div id="login-overlay">
+    <div class="login-box">
+        <div class="login-icon"><i class="fas fa-truck-medical"></i></div>
+        <div class="login-title">Area Riservata</div>
+        <div class="login-sub">Gestione Flotta 118 RSM</div>
+        
+        <div class="input-group-login">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="pwd-app-input" placeholder="Inserisci Password" onkeypress="handleLoginEnter(event)">
+        </div>
+        
+        <button class="btn-login" onclick="checkAppPassword()">ACCEDI</button>
+        <div id="error-msg-login" class="error-msg-login">Password errata. Riprova.</div>
+    </div>
+    <div style="color:rgba(255,255,255,0.4); font-size:0.75rem; margin-top:30px; font-weight:600; letter-spacing:1px;">CENTRALE 118 SAN MARINO</div>
+</div>
 
 <!-- MODULO STAMPA -->
 <div id="modulo-stampa">
@@ -353,6 +402,40 @@ body{background:var(--bg);font-family:var(--font);color:#1a1a2e;margin:0}
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // --- GESTIONE LOGIN (PASSWORD "118") ---
+const PWD_APP = "118";
+const KEY_AUTH_APP = "auth_gestionale_flotta_118";
+
+// Verifica se l'utente ha già fatto l'accesso in precedenza
+document.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem(KEY_AUTH_APP) === "true") {
+        document.getElementById('login-overlay').style.display = 'none';
+    } else {
+        setTimeout(() => document.getElementById('pwd-app-input').focus(), 100);
+    }
+});
+
+function checkAppPassword() {
+    const inputVal = document.getElementById('pwd-app-input').value;
+    const errorMsg = document.getElementById('error-msg-login');
+    const overlay = document.getElementById('login-overlay');
+
+    if (inputVal === PWD_APP) {
+        localStorage.setItem(KEY_AUTH_APP, "true"); // Salva l'accesso
+        overlay.style.opacity = "0";
+        setTimeout(() => { overlay.style.display = "none"; }, 400);
+        if(navigator.vibrate) navigator.vibrate(50);
+    } else {
+        errorMsg.style.display = "block";
+        if(navigator.vibrate) navigator.vibrate([100, 50, 100]); // Vibrazione di errore
+        document.getElementById('pwd-app-input').value = ""; // Svuota il campo
+    }
+}
+
+// Permette l'accesso premendo il tasto "Invio"
+function handleLoginEnter(e) {
+    if (e.key === "Enter") checkAppPassword();
+}
 const STORAGE_KEY_FLOTTA='flottaDB_118_SanMarino',STORAGE_KEY_TICKETS='activeTickets_118_SanMarino',STORAGE_KEY_NOTES='calendarNotes_118_SanMarino',STORAGE_KEY_WASH='washHistoryDB_118_SanMarino';
 let flottaDB=localStorage.getItem(STORAGE_KEY_FLOTTA)?JSON.parse(localStorage.getItem(STORAGE_KEY_FLOTTA)):{'Falco 27':[],'Falco 28':[],'Falco 29':[],'Falco 30':[],'Falco 31':[]};
 let activeTickets=localStorage.getItem(STORAGE_KEY_TICKETS)?JSON.parse(localStorage.getItem(STORAGE_KEY_TICKETS)):[];
@@ -366,7 +449,45 @@ const months=["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","
 // GENERATE FLEET CARDS
 (function(){const c=document.getElementById('fleet-cards-container');veicoli.forEach(v=>{const id=v.replace(' ',''),type=v==='Falco 27'?'Automedica':'Ambulanza',ic=v==='Falco 27'?'fa-car-side icon-automedica':'fa-truck-medical icon-ambulanza',cc=v==='Falco 27'?'automedica':'ambulanza';c.innerHTML+=`<div class="col-6 col-md-2"><div class="vehicle-card ${cc} stato-operativa" id="card-${id}" onclick="apriStorico('${v}')"><div class="wash-alert-icon" id="wash-alert-${id}" title="Lavaggio richiesto" onclick="event.stopPropagation();apriModalLavaggio('${v}')"><i class="fas fa-shower"></i></div><div class="icon-wrapper"><i class="fas ${ic}"></i></div><div class="vehicle-name">${v}</div><div class="vehicle-plate">${targhe[v]}</div><div class="vehicle-type">${type}</div><div class="status-badge" id="status-text-${id}">OPERATIVA</div><div class="vehicle-wash-info" id="wash-info-${id}"></div></div></div>`;});})();
 
-function salvaDati(){localStorage.setItem(STORAGE_KEY_FLOTTA,JSON.stringify(flottaDB));localStorage.setItem(STORAGE_KEY_TICKETS,JSON.stringify(activeTickets));localStorage.setItem(STORAGE_KEY_NOTES,JSON.stringify(calendarNotes));localStorage.setItem(STORAGE_KEY_WASH,JSON.stringify(washDB));renderCalendar(currentMonth,currentYear)}
+let isCloudSyncing = false;
+
+window.getAppState = () => ({ flotta: flottaDB, tickets: activeTickets, notes: calendarNotes, wash: washDB });
+
+function salvaDati(){
+    // 1. Salvataggio locale (backup di sicurezza sul dispositivo)
+    localStorage.setItem(STORAGE_KEY_FLOTTA,JSON.stringify(flottaDB));
+    localStorage.setItem(STORAGE_KEY_TICKETS,JSON.stringify(activeTickets));
+    localStorage.setItem(STORAGE_KEY_NOTES,JSON.stringify(calendarNotes));
+    localStorage.setItem(STORAGE_KEY_WASH,JSON.stringify(washDB));
+    
+    renderCalendar(currentMonth,currentYear);
+
+    // 2. Invio automatico al Cloud (invisibile e istantaneo)
+    if(window.cloudSave && !isCloudSyncing) {
+        window.cloudSave(flottaDB, activeTickets, calendarNotes, washDB);
+    }
+}
+
+// 3. Ricevitore dati dal Cloud (sincronizza gli schermi in tempo reale)
+window.syncData = function(tipo, data) {
+    isCloudSyncing = true; 
+    
+    if(tipo === 'flotta') flottaDB = data;
+    if(tipo === 'tickets') activeTickets = data;
+    if(tipo === 'notes') calendarNotes = data;
+    if(tipo === 'wash') washDB = data;
+
+    // Mantieni allineato il salvataggio locale
+    localStorage.setItem(STORAGE_KEY_FLOTTA,JSON.stringify(flottaDB));
+    localStorage.setItem(STORAGE_KEY_TICKETS,JSON.stringify(activeTickets));
+    localStorage.setItem(STORAGE_KEY_NOTES,JSON.stringify(calendarNotes));
+    localStorage.setItem(STORAGE_KEY_WASH,JSON.stringify(washDB));
+
+    aggiornaInterfacciaGrafica();
+    renderCalendar(currentMonth, currentYear);
+    
+    setTimeout(() => { isCloudSyncing = false; }, 300);
+};
 function determinaCategoria(d){d=d.toLowerCase();if(d.includes("batteria")||d.includes("luci")||d.includes("sirena")||d.includes("radio")||d.includes("fari")||d.includes("elettric"))return"Elettrica";if(d.includes("freni")||d.includes("motore")||d.includes("olio")||d.includes("cambio")||d.includes("frizione")||d.includes("tagliando"))return"Meccanica";if(d.includes("gomme")||d.includes("pneumatici")||d.includes("ruota")||d.includes("foratura"))return"Pneumatici";if(d.includes("paraurti")||d.includes("fiancata")||d.includes("specchietto")||d.includes("graffi"))return"Carrozzeria";if(d.includes("barella")||d.includes("monitor")||d.includes("ossigeno")||d.includes("defibrillatore"))return"Sanitaria";return"Altro"}
 function toggleEmailInput(){document.getElementById('divEmailDestinatari').style.display=document.getElementById('checkInviaEmail').checked?'block':'none'}
 function toggleEmailNotaInput(){document.getElementById('divEmailDestinatariNota').style.display=document.getElementById('checkEmailNota').checked?'block':'none'}
@@ -508,6 +629,55 @@ renderCalendar(currentMonth,currentYear);
 setTimeout(()=>checkAvvisiCritici(),1000);
 setTimeout(importaStoricoFalco31,2000);
 setTimeout(importaStoricoCompleto,2500);
+</script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    // Le tue chiavi
+    const firebaseConfig = {
+        apiKey: "AIzaSyAMX2ycf_6P3AcBvarVX4XNKbdposkuqgE",
+        authDomain: "area-personale-autsocc-118-rsm.firebaseapp.com",
+        projectId: "area-personale-autsocc-118-rsm",
+        storageBucket: "area-personale-autsocc-118-rsm.firebasestorage.app",
+        messagingSenderId: "910283994567",
+        appId: "1:910283994567:web:d9c45b5f4b5a83b92595e2",
+        measurementId: "G-9P8X82Y4H5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Funzione globale per sparare i dati al Cloud
+    window.cloudSave = async function(flotta, tickets, notes, wash) {
+        try {
+            await setDoc(doc(db, "gestionale_118", "flotta"), { data: JSON.stringify(flotta) });
+            await setDoc(doc(db, "gestionale_118", "tickets"), { data: JSON.stringify(tickets) });
+            await setDoc(doc(db, "gestionale_118", "notes"), { data: JSON.stringify(notes) });
+            await setDoc(doc(db, "gestionale_118", "wash"), { data: JSON.stringify(wash) });
+        } catch(e) {
+            console.error("Errore salvataggio Firebase:", e);
+        }
+    };
+
+    // Ascolto "radar" in tempo reale (Sincronizza gli altri computer)
+    onSnapshot(doc(db, "gestionale_118", "flotta"), (d) => { if(d.exists()) window.syncData('flotta', JSON.parse(d.data().data)); });
+    onSnapshot(doc(db, "gestionale_118", "tickets"), (d) => { if(d.exists()) window.syncData('tickets', JSON.parse(d.data().data)); });
+    onSnapshot(doc(db, "gestionale_118", "notes"), (d) => { if(d.exists()) window.syncData('notes', JSON.parse(d.data().data)); });
+    onSnapshot(doc(db, "gestionale_118", "wash"), (d) => { if(d.exists()) window.syncData('wash', JSON.parse(d.data().data)); });
+
+    // CARICAMENTO INIZIALE AUTOMATICO (Migrazione verso il cloud)
+    setTimeout(async () => {
+        if(window.getAppState) {
+            const state = window.getAppState();
+            const snap = await getDoc(doc(db, "gestionale_118", "tickets"));
+            // Se Firebase è vergine, prende i tuoi dati locali e li usa per inizializzare il cloud
+            if (!snap.exists()) {
+                console.log("Inizializzazione Firebase con i dati locali in corso...");
+                window.cloudSave(state.flotta, state.tickets, state.notes, state.wash);
+            }
+        }
+    }, 2000);
 </script>
 </body>
 </html>
