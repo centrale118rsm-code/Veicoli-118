@@ -20,41 +20,7 @@
 *{box-sizing:border-box}
 body{background:var(--bg);font-family:var(--font);color:#1a1a2e;margin:0}
 
-/* LOGIN */
-#login-overlay{
-  position:fixed;inset:0;
-  background:linear-gradient(160deg,#0a1628 0%,#102a50 40%,#1a3a6a 100%);
-  z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;
-  transition:opacity 0.4s ease;padding:20px;
-}
-.login-box{
-  background:#fff;padding:36px 28px;border-radius:20px;
-  box-shadow:0 10px 40px rgba(0,0,0,0.5);
-  width:100%;max-width:340px;text-align:center;border-bottom:4px solid var(--c3);
-}
-.login-icon{
-  background:#eef1f5;width:72px;height:72px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
-  color:var(--c2);font-size:34px;
-}
-.login-title{font-size:1.5rem;font-weight:800;color:#1a1a2e;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
-.login-sub{font-size:.85rem;color:#666;margin-bottom:28px;font-weight:500}
-.input-group-login{position:relative;margin-bottom:20px}
-.input-group-login input{
-  width:100%;padding:14px 14px 14px 46px;border-radius:12px;
-  border:2px solid #ddd;font-size:1.05rem;font-weight:600;outline:none;
-  transition:border-color .2s;font-family:var(--font);letter-spacing:2px;
-}
-.input-group-login input:focus{border-color:var(--c2)}
-.input-group-login i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#888;font-size:1rem}
-.btn-login{
-  width:100%;padding:14px;border-radius:12px;border:none;
-  background:var(--c2);color:white;font-weight:800;font-size:1rem;
-  cursor:pointer;transition:background .2s;font-family:var(--font);
-}
-.btn-login:hover{background:#003d7a}
-.btn-login:active{transform:scale(.97)}
-.error-msg-login{color:var(--c3);font-size:.85rem;font-weight:700;margin-top:12px;display:none}
+/* LOGIN CSS RIMOSSO */
 
 /* HEADER */
 .hero-header{
@@ -264,27 +230,7 @@ body{background:var(--bg);font-family:var(--font);color:#1a1a2e;margin:0}
 </head>
 <body>
 
-<!-- ═══════════════════ LOGIN OVERLAY ═══════════════════ -->
-<div id="login-overlay">
-  <div class="login-box">
-    <div class="login-icon"><i class="fas fa-truck-medical"></i></div>
-    <div class="login-title">Area Riservata</div>
-    <div class="login-sub">Gestione Flotta 118 RSM</div>
-    <form onsubmit="event.preventDefault(); checkAppPassword();" autocomplete="off">
-      <div class="input-group-login">
-        <i class="fas fa-lock"></i>
-        <input type="text" inputmode="numeric" pattern="[0-9]*"
-               id="pwd-app-input"
-               placeholder="Password"
-               autocomplete="off"
-               style="-webkit-text-security:disc;text-security:disc;">
-      </div>
-      <button type="submit" class="btn-login">ACCEDI</button>
-    </form>
-    <div id="error-msg-login" class="error-msg-login"><i class="fas fa-exclamation-circle me-1"></i>Password errata. Riprova.</div>
-  </div>
-  <div style="color:rgba(255,255,255,0.4);font-size:.75rem;margin-top:30px;font-weight:600;letter-spacing:1px;">CENTRALE 118 SAN MARINO</div>
-</div>
+<!-- LOGIN RIMOSSO - Accesso diretto -->
 
 <!-- ═══════════════════ MODULO STAMPA ═══════════════════ -->
 <div id="modulo-stampa">
@@ -489,7 +435,7 @@ body{background:var(--bg);font-family:var(--font);color:#1a1a2e;margin:0}
         <p>Nessuna segnalazione attiva.</p>
       </div>
 
-      <div class="text-center mt-4 no-print"><p class="small text-muted">Versione 14.1 — Fix Login Mobile + Operatore Segnalazione</p></div>
+      <div class="text-center mt-4 no-print"><p class="small text-muted">Versione 15.0 — Login Rimosso, Accesso Diretto</p></div>
     </div>
   </div>
 </div>
@@ -943,42 +889,8 @@ body{background:var(--bg);font-family:var(--font);color:#1a1a2e;margin:0}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 // ════════════════════════════════════════════════
-// LOGIN — Fix: form wrapper + click/touch listeners
+// LOGIN RIMOSSO - Accesso diretto al gestionale
 // ════════════════════════════════════════════════
-const PWD_APP = "118";
-const KEY_AUTH_APP = "auth_gestionale_flotta_118";
-
-window.addEventListener('load', () => {
-  const overlay = document.getElementById('login-overlay');
-  if (localStorage.getItem(KEY_AUTH_APP) === "true") {
-    overlay.style.display = 'none';
-  } else {
-    overlay.style.display = 'flex';
-    const inp = document.getElementById('pwd-app-input');
-    if (inp) {
-      setTimeout(() => inp.focus(), 500);
-      inp.addEventListener('click', function(){ this.focus(); });
-      inp.addEventListener('touchstart', function(){ this.focus(); }, {passive:true});
-    }
-  }
-});
-
-function checkAppPassword() {
-  const inputVal = document.getElementById('pwd-app-input').value.trim();
-  const errorMsg = document.getElementById('error-msg-login');
-  const overlay  = document.getElementById('login-overlay');
-  if (inputVal === PWD_APP) {
-    localStorage.setItem(KEY_AUTH_APP, "true");
-    overlay.style.opacity = "0";
-    setTimeout(() => { overlay.style.display = "none"; }, 400);
-    if (navigator.vibrate) navigator.vibrate(50);
-  } else {
-    errorMsg.style.display = "block";
-    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-    document.getElementById('pwd-app-input').value = "";
-    setTimeout(() => document.getElementById('pwd-app-input').focus(), 50);
-  }
-}
 
 // ════════════════════════════════════════════════
 // DATI & STORAGE
