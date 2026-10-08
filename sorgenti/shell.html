@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a1628">
+<title>Piano Manutenzione Veicoli · 118 San Marino</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='12' fill='%230055a5'/%3E%3Ccircle cx='32' cy='32' r='22' fill='white'/%3E%3Cpath d='M32 14v36M14 32h36' stroke='%23e30613' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/*__CSS__*/
+</style>
+</head>
+<body>
+
+<!-- ═══════════ MODULO STAMPA (modulo cartaceo ufficiale, compilato in automatico) ═══════════ -->
+<div id="modulo-stampa">
+  <div style="text-align:center;margin-bottom:16px">
+    <div style="font-size:10pt;text-decoration:underline;margin-bottom:12px">Il seguente modulo deve sempre restare in centrale operativa affisso in bacheca fino a pratica conclusa</div>
+    <div style="font-size:16pt;font-weight:bold;text-transform:uppercase;margin:12px 0">MODULO SEGNALAZIONE GUASTI<br>MANUTENZIONE AUTOMEZZI 118</div>
+  </div>
+  <table class="print-table"><tr><th colspan="2" style="border-bottom:2px solid #000">1. Riscontro del guasto</th><th style="border-bottom:2px solid #000;text-align:center">Descrizione guasto</th></tr>
+    <tr><td class="sec-1-label">Data:</td><td class="sec-1-val" id="p-data"></td><td rowspan="5" style="vertical-align:top;padding:10px"><div id="p-cat" style="font-weight:bold;margin-bottom:5px"></div><div id="p-descrizione" style="font-family:'Courier New',monospace;font-size:11pt;white-space:pre-line"></div></td></tr>
+    <tr><td class="sec-1-label">Falco:</td><td class="sec-1-val" id="p-falco" style="font-weight:bold"></td></tr>
+    <tr><td class="sec-1-label">Km:</td><td class="sec-1-val" id="p-km"></td></tr>
+    <tr><td class="sec-1-label">Operatore:</td><td class="sec-1-val" id="p-operatore"></td></tr>
+    <tr><td class="sec-1-label">Turno:</td><td class="sec-1-val"></td></tr></table>
+  <div class="print-row-flex">
+    <div class="print-col-half"><table class="print-table"><tr><th colspan="2" style="border-bottom:2px solid #000">2. Appuntamento riparazione</th></tr>
+      <tr><td class="sec-1-label">Officina:</td><td class="empty-cell-h" id="p-app-off"></td></tr><tr><td class="sec-1-label">Data:</td><td class="empty-cell-h" id="p-app-data"></td></tr>
+      <tr><td class="sec-1-label">Ora:</td><td class="empty-cell-h" id="p-app-ora"></td></tr><tr><td class="sec-1-label">Operatore:</td><td class="empty-cell-h" id="p-app-op"></td></tr>
+      <tr><td class="sec-1-label">Op che consegna:</td><td class="empty-cell-h" id="p-app-cons"></td></tr><tr><td class="sec-1-label" style="height:50px">Note:</td><td id="p-app-note"></td></tr></table></div>
+    <div class="print-col-half"><table class="print-table"><tr><th colspan="2" style="border-bottom:2px solid #000">3. Invio e-mail informativa</th></tr>
+      <tr><td class="sec-1-label">Data:</td><td class="empty-cell-h" id="p-em-data"></td></tr><tr><td class="sec-1-label">Operatore:</td><td class="empty-cell-h" id="p-em-op"></td></tr>
+      <tr><td class="sec-1-label" rowspan="2">Preventivo:</td><td style="text-align:center;height:25px" id="p-em-prev">si | no</td></tr><tr><td style="text-align:center;height:25px" id="p-em-soglia">+2.600€ | -2.600€</td></tr>
+      <tr><td colspan="2" style="font-size:8pt;font-style:italic" id="p-soglia-note">Se superiore a 2.600€ attendere autorizzazione</td></tr><tr><td class="sec-1-label">Data autorizzazione:</td><td class="empty-cell-h" id="p-em-aut"></td></tr></table></div>
+  </div>
+  <table class="print-table"><tr><th colspan="2" style="border-bottom:2px solid #000">4. Ritiro del veicolo</th><th style="border-bottom:2px solid #000;text-align:center">Descrizione intervento</th></tr>
+    <tr><td class="sec-1-label">Data:</td><td class="sec-1-val empty-cell-h" id="p-rit-data"></td><td rowspan="5" style="vertical-align:top;white-space:pre-line;padding:8px" id="p-rit-int"></td></tr>
+    <tr><td class="sec-1-label">Ora:</td><td class="sec-1-val empty-cell-h" id="p-rit-ora"></td></tr><tr><td class="sec-1-label">Km:</td><td class="sec-1-val empty-cell-h" id="p-rit-km"></td></tr>
+    <tr><td class="sec-1-label">Operatore:</td><td class="sec-1-val empty-cell-h" id="p-rit-op"></td></tr><tr><td class="sec-1-label">Op ritiro:</td><td class="sec-1-val empty-cell-h" id="p-rit-opr"></td></tr></table>
+  <div class="print-footer"><div style="font-weight:bold;text-transform:uppercase">AGGIORNARE SEMPRE IL FILE EXCEL "STORICO MANUTENZIONI"</div><div style="font-size:8pt;text-align:right;margin-top:5px" id="p-rev">Ultima revisione 23/09/25</div></div>
+</div>
+
+<!-- ═══════════ REPORT STAMPA ═══════════ -->
+<div id="report-container">
+  <div class="report-header"><div class="report-logo-title" id="rep-ente">118 SAN MARINO SOCCORSO</div><div style="font-size:13px;color:#555;margin-top:4px">Report storico manutenzioni</div></div>
+  <div class="report-meta"><div><strong>Filtro:</strong> <span id="rep-veicolo"></span></div><div><strong>Data:</strong> <span id="rep-data"></span></div><div><strong>Interventi:</strong> <span id="rep-totale"></span></div><div><strong>Stampato da:</strong> <span id="rep-by"></span></div></div>
+  <table class="report-table"><thead><tr><th width="10%">Data</th><th width="10%">Veicolo</th><th width="11%">Categoria</th><th width="27%">Problema</th><th width="14%">Officina</th><th width="28%">Intervento</th></tr></thead><tbody id="rep-body"></tbody></table>
+  <div style="margin-top:24px;font-size:10px;text-align:center;color:#666">Documento generato dal gestionale "Piano Manutenzione Veicoli 118"</div>
+</div>
+
+<!-- ═══════════ APP ═══════════ -->
+<div id="test-banner" class="d-none"><i class="fas fa-flask me-1"></i>VERSIONE DI PROVA (RC) — legge i dati reali ma NON salva nulla sul cloud: le modifiche restano solo in questo browser.<button class="btn btn-dark btn-sm" onclick="resetTestData()">Ricarica dati reali</button></div>
+<header class="app-header"><div class="inner">
+  <div class="brand"><div class="brand-logo"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="#0055a5"/><circle cx="32" cy="32" r="21" fill="#fff"/><path d="M32 17v30M17 32h30" stroke="#e30613" stroke-width="8" stroke-linecap="round"/></svg></div>
+    <div><h1 id="hdr-title">Piano Manutenzione Veicoli</h1><small id="hdr-sub">118 SAN MARINO SOCCORSO</small></div></div>
+  <div class="hdr-right">
+    <div class="hdr-search"><input id="hdr-search" type="search" placeholder="Cerca nello storico…" autocomplete="off"><i class="fas fa-search"></i></div>
+    <button class="hdr-chip btn text-white" id="hdr-op" onclick="pickOperator()" title="Operatore attivo (tracciabilità)"></button>
+    <span class="hdr-chip" id="hdr-cloud"></span>
+    <span class="hdr-chip clock" id="hdr-clock"></span>
+    <button class="btn-admin" id="hdr-admin" onclick="App.go('admin')"></button>
+  </div>
+</div></header>
+<nav class="app-nav" id="app-nav"></nav>
+<main id="views"></main>
+<div class="foot-note">Gestionale Veicoli 118 · v<span class="vers"></span> · ogni operazione è registrata con il nome dell'operatore</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/*__JS__*/
+document.querySelector('.vers').textContent = APP_VERSION;
+initApp();
+</script>
+
+<!-- ═══════════ FIREBASE (stessi documenti della v15: gestionale_118/…) ═══════════ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyAMX2ycf_6P3AcBvarVX4XNKbdposkuqgE",
+    authDomain: "area-personale-autsocc-118-rsm.firebaseapp.com",
+    projectId: "area-personale-autsocc-118-rsm",
+    storageBucket: "area-personale-autsocc-118-rsm.firebasestorage.app",
+    messagingSenderId: "910283994567",
+    appId: "1:910283994567:web:d9c45b5f4b5a83b92595e2",
+    measurementId: "G-9P8X82Y4H5"
+  };
+  const COL = "gestionale_118";
+  try {
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const ref = id => doc(db, COL, id);
+    const parse = s => { try { return s.exists() ? JSON.parse(s.data().data) : null; } catch (e) { console.error('Documento non leggibile', e); return null; } };
+    if (TEST_MODE) {
+      const ro = () => Promise.reject(new Error('modalità prova: scrittura disabilitata'));
+      window.Cloud = { save: ro, saveRaw: ro, del: ro, getRaw: async id => { const s = await getDoc(ref(id)); return s.exists() ? s.data() : null; } };
+      for (const name of DOCS) {
+        getDoc(ref(name)).then(s => Store.onRemote(name, parse(s), s.exists()))
+          .catch(e => { console.error(e); Store.setStatus('err', 'Errore lettura cloud: ' + e.message); });
+      }
+    } else {
+      window.Cloud = {
+        save: (name, value) => setDoc(ref(name), { data: JSON.stringify(value) }),
+        saveRaw: (id, obj) => setDoc(ref(id), obj),
+        getRaw: async id => { const s = await getDoc(ref(id)); return s.exists() ? s.data() : null; },
+        del: id => deleteDoc(ref(id))
+      };
+      for (const name of DOCS) {
+        onSnapshot(ref(name), s => { if (s.metadata.hasPendingWrites) return; Store.onRemote(name, parse(s), s.exists()); },
+          e => { console.error(e); Store.setStatus('err', 'Errore cloud: ' + e.message); });
+      }
+    }
+  } catch (e) { console.error(e); Store.setStatus('err', 'Cloud non disponibile'); }
+</script>
+</body>
+</html>
